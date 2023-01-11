@@ -1,4 +1,4 @@
-#!/usr/bin/python3.11
+#!/usr/bin/python3
 from argparse import ArgumentParser
 from shutil import move
 from os import getcwd, mkdir, path, chdir, system
