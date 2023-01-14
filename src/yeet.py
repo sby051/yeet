@@ -12,6 +12,7 @@ CWD = getcwd()
 USER_DIR = path.expanduser("~")
 YEET_DIR = f"{USER_DIR}/.yeet"
 YEETED_JSON = f"{YEET_DIR}/yeeted.json"
+YEET_CONFIG = f"{YEET_DIR}/config.json"
 YEET_EXPIRY_SECONDS = 60 * 60 * 24 * 7 # 7 days
 CURRENT_TIME = time()
 PARSER_OPTIONS = [
@@ -58,9 +59,8 @@ PARSER_OPTIONS = [
         "action": "store_true"
     }
 ]
-
 PARSER_DETAILS = {
-    "description": "Yeet files to the _yeet bin and restore them later.",
+    "description": "A rubbish bin for Linux",
     "epilog": "GitHub: https://github.com/sby051/yeet",
     "version": "1.0.0",
     "usage": "yeet {options} [file]",
@@ -69,11 +69,23 @@ PARSER_DETAILS = {
 
 def _init_yeet() -> None:
     if not path.exists(YEET_DIR):
+        print("Creating ~/.yeet directory")
         mkdir(YEET_DIR)
     
     if not path.exists(YEETED_JSON):
+        print("Creating yeeted.json at ~/.yeet/yeeted.json")
         with open(YEETED_JSON, "w") as f:
             f.write("{}")
+            
+    if not path.exists(YEET_CONFIG):
+        print("Creating config file at ~/.yeet/config.json")
+        with open(YEET_CONFIG, "w") as f:
+            f.write("""
+{
+    // uncomment and change this to change the expiry time in seconds
+    // "expiry": 604800 
+}
+""")
             
 def _get_parser() -> ArgumentParser:
     parser = ArgumentParser()
@@ -92,6 +104,12 @@ def _get_parser() -> ArgumentParser:
         )
 
     return parser
+
+def _parse_config() -> None:
+    with open(YEET_CONFIG, "r") as f:
+        config = json.loads(f.read())
+        if "expiry" in config:
+            YEET_EXPIRY_SECONDS = config["expiry"]
             
 def _yeet(file: str) -> None:
     absolute_path = f"{CWD}/{file}"
@@ -144,21 +162,21 @@ def _restore(file: str) -> None:
     
     print(f"Restored {file} to {original_location}")
     
-def _update_yeet() -> None:
+def _update() -> None:
     print("Updating yeet...")
     system("curl -s https://raw.githubusercontent.com/sby051/yeet/main/bin/yeet > /usr/bin/yeet")
     print("Yeet has been updated.")
+    
+def _uninstall() -> None:
+    shutil.rmtree(YEET_DIR)
+    os.system("sudo rm -rf /usr/bin/yeet")
+    print("Yeet uninstalled successfully.")
     
 def _time_to_date(timestamp: float) -> str:
     x = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=timestamp)
     return x.strftime("%d/%m/%Y at %H:%M:%S")
 
-def _uninstall_yeet() -> None:
-    shutil.rmtree(YEET_DIR)
-    os.system("sudo rm -rf /usr/bin/yeet")
-    print("Yeet uninstalled successfully.")
-
-def _list_yeeted() -> None:
+def _list() -> None:
     
     with open(f"{YEETED_JSON}", "r") as f:
         yeet_json = json.load(f)
@@ -208,7 +226,9 @@ def _check_expiry() -> None:
 
 def main():
     parser = _get_parser()
+    
     _init_yeet()
+    _parse_config()
     _check_expiry()
     
     args = parser.parse_args()
@@ -224,7 +244,7 @@ def main():
             _confirm(f"Are you sure you want to restore {args.file}?", lambda: _restore(args.file))
         
     if args.list:
-        _list_yeeted()
+        _list()
         
     if args.empty:
         if args.yes:
@@ -233,10 +253,10 @@ def main():
             _confirm("Are you sure you want to empty the yeet bin?", _empty)
             
     if args.uninstall:
-        _confirm("Are you sure you want to uninstall yeet?", _uninstall_yeet)
+        _confirm("Are you sure you want to uninstall yeet?", _uninstall)
         
     if args.update:
-        _update_yeet()
+        _update()
 
     if not args.restore and not args.list and not args.empty:
         if not args.file:
