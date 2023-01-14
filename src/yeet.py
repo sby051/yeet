@@ -77,16 +77,6 @@ def _init_yeet() -> None:
         with open(YEETED_JSON, "w") as f:
             f.write("{}")
             
-    if not path.exists(YEET_CONFIG):
-        print("Creating config file at ~/.yeet/config.json")
-        with open(YEET_CONFIG, "w") as f:
-            f.write("""
-{
-    // uncomment and change this to change the expiry time in seconds
-    // "expiry": 604800 
-}
-""")
-            
 def _get_parser() -> ArgumentParser:
     parser = ArgumentParser()
     
@@ -102,14 +92,16 @@ def _get_parser() -> ArgumentParser:
             help=option["help"],
             action=option["action"]
         )
+        
+    # add optional --expiry argument that takes a value in seconds
+    parser.add_argument(
+        "--expiry",
+        help="The number of seconds before a file is automatically deleted",
+        nargs="?",
+        action="store",
+    )
 
     return parser
-
-def _parse_config() -> None:
-    with open(YEET_CONFIG, "r") as f:
-        config = json.loads(f.read())
-        if "expiry" in config:
-            YEET_EXPIRY_SECONDS = config["expiry"]
             
 def _yeet(file: str) -> None:
     absolute_path = f"{CWD}/{file}"
@@ -232,6 +224,19 @@ def main():
     _check_expiry()
     
     args = parser.parse_args()
+    
+    if args.expiry:
+        try:
+            expiry = int(args.expiry)
+        except ValueError:
+            print("Please specify a valid expiry time.")
+            return
+            
+        if expiry < 0:
+            print("Please specify a positive expiry time.")
+            return
+        
+        YEET_EXPIRY_SECONDS = expiry
         
     if args.restore:
         if not args.file:
