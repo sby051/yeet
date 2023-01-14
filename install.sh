@@ -9,8 +9,7 @@ fi
 sudo mkdir /opt/yeet
 sudo chown $USER:$USER /opt/yeet
 
-# Copy files
-cp -r ./bin /opt/yeet/bin
+curl -s https://raw.githubusercontent.com/yeet-lang/yeet/master/yeet > /opt/yeet/bin/yeet
 
 echo "export PATH=/opt/yeet/bin:\$PATH" >> ~/.zshrc
 echo "export PATH=/opt/yeet/bin:\$PATH" >> ~/.bashrc

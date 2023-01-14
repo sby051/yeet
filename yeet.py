@@ -17,7 +17,7 @@ CURRENT_TIME = time()
 PARSER_OPTIONS = [
     {
         "short": "r",
-        "long": "_restore",
+        "long": "restore",
         "help": "Restore a file from the yeet bin",
         "action": "store_true"
     },
@@ -29,8 +29,8 @@ PARSER_OPTIONS = [
     },
     {
         "short": "e",
-        "long": "_empty",
-        "help": "Empty the _yeet bin",
+        "long": "empty",
+        "help": "Empty the yeet bin",
         "action": "store_true"
     },
     {
@@ -47,7 +47,7 @@ PARSER_OPTIONS = [
     },
 ]
 PARSER_DETAILS = {
-    "description": "Yeet files to the _yeet bin and restore them later.",
+    "description": "Yeet files to the yeet bin and restore them later.",
     "epilog": "GitHub: https://github.com/sby051/yeet",
     "version": "0.2.0",
     "usage": "yeet {options} [file]",
