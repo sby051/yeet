@@ -220,7 +220,6 @@ def main():
     parser = _get_parser()
     
     _init_yeet()
-    _parse_config()
     _check_expiry()
     
     args = parser.parse_args()
