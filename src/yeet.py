@@ -17,7 +17,7 @@ CURRENT_TIME = time()
 PARSER_OPTIONS = [
     {
         "short": "r",
-        "long": "_restore",
+        "long": "restore",
         "help": "Restore a file from the yeet bin",
         "action": "store_true"
     },
@@ -29,8 +29,8 @@ PARSER_OPTIONS = [
     },
     {
         "short": "e",
-        "long": "_empty",
-        "help": "Empty the _yeet bin",
+        "long": "empty",
+        "help": "Empty the yeet bin",
         "action": "store_true"
     },
     {
@@ -45,7 +45,20 @@ PARSER_OPTIONS = [
         "help": "Print the version and exit",
         "action": "version"
     },
+    {
+        "short": "U",
+        "long": "uninstall",
+        "help": "Uninstall yeet",
+        "action": "store_true",
+    },
+    {
+        "short": "u",
+        "long": "update",
+        "help": "Update yeet",
+        "action": "store_true"
+    }
 ]
+
 PARSER_DETAILS = {
     "description": "Yeet files to the _yeet bin and restore them later.",
     "epilog": "GitHub: https://github.com/sby051/yeet",
@@ -131,9 +144,42 @@ def _restore(file: str) -> None:
     
     print(f"Restored {file} to {original_location}")
     
+def _update_yeet() -> None:
+    # pull latest binary from github and replace the current one
+    system("curl -s https://raw.githubusercontent.com/sby051/yeet/main/bin/yeet > /opt/yeet/bin/yeet")
+    print("Yeet has been updated.")
+    
 def _time_to_date(timestamp: float) -> str:
     x = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=timestamp)
     return x.strftime("%d/%m/%Y at %H:%M:%S")
+
+def _uninstall_yeet() -> None:
+    shutil.rmtree(YEET_DIR)
+    shutil.rmtree("/opt/yeet")
+    with open(f"{USER_DIR}/.bashrc", "r") as f:
+        bashrc = f.read()
+        # remove the path from the bashrc
+        bashrc = bashrc.replace("export PATH=$PATH:/opt/yeet/bin", "")
+        
+    with open(f"{USER_DIR}/.bashrc", "w") as f:
+        f.write(bashrc)
+        
+    with open(f"{USER_DIR}/.zshrc", "r") as f:
+        zshrc = f.read()
+        # remove the path from the zshrc
+        zshrc = zshrc.replace("export PATH=$PATH:/opt/yeet/bin", "")
+        
+    with open(f"{USER_DIR}/.zshrc", "w") as f:
+        f.write(zshrc)
+        
+    with open(f"{USER_DIR}/.config/fish/config.fish", "r") as f:
+        fishrc = f.read()
+        fishrc = fishrc.replace("set PATH $PATH /opt/yeet/bin", "")
+        
+    with open(f"{USER_DIR}/.config/fish/config.fish", "w") as f:
+        f.write(fishrc)
+        
+    print("Yeet uninstalled successfully.")
 
 def _list_yeeted() -> None:
     
@@ -189,12 +235,12 @@ def main():
     _check_expiry()
     
     args = parser.parse_args()
-    
-    if not args.file and not args._empty and not args.list:
-        parser.print_usage()
-        return
-    
-    if args._restore:
+        
+    if args.restore:
+        if not args.file:
+            print("Please specify a file to restore.")
+            return
+        
         if args.yes:
             _restore(args.file)
         else:
@@ -203,13 +249,22 @@ def main():
     if args.list:
         _list_yeeted()
         
-    if args._empty:
+    if args.empty:
         if args.yes:
             _empty()
         else:
             _confirm("Are you sure you want to empty the yeet bin?", _empty)
+            
+    if args.uninstall:
+        _confirm("Are you sure you want to uninstall yeet?", _uninstall_yeet)
+        
+    if args.update:
+        _update_yeet()
 
-    if not args._restore and not args.list and not args._empty:
+    if not args.restore and not args.list and not args.empty:
+        if not args.file:
+            print("Please specify a file to yeet.")
+            return
         _yeet(args.file)
     
 if __name__ == '__main__':
