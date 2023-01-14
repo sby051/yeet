@@ -126,7 +126,7 @@ def _restore(file: str) -> None:
         yeet_json = json.load(f)
         
     if file not in yeet_json:
-        print(f"File {file} has not been yeeted.")
+        print(f"File {file} has never been yeeted, and therefore cannot be restored.")
         return
     
     original_location = yeet_json[file]["path"]
