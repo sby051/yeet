@@ -9,7 +9,7 @@ fi
 sudo mkdir /opt/yeet
 sudo chown $USER:$USER /opt/yeet
 
-curl -L -s https://github.com/sby051/yeet/blob/main/bin/yeet?raw=true > /opt/yeet/bin/yeet
+curl -L "https://github.com/sby051/yeet/blob/main/bin/yeet?raw=true" > /opt/yeet/bin/yeet
 
 echo "export PATH=/opt/yeet/bin:\$PATH" >> ~/.zshrc
 echo "export PATH=/opt/yeet/bin:\$PATH" >> ~/.bashrc
