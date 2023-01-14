@@ -83,7 +83,7 @@ def _get_parser() -> ArgumentParser:
     for detail in PARSER_DETAILS:
         parser.__setattr__(detail, PARSER_DETAILS[detail])
     
-    parser.add_argument("file", help="The file to _yeet or _restore", nargs="?")
+    parser.add_argument("file", help="The file to yeet, restore or list", nargs="?")
     
     for option in PARSER_OPTIONS:
         parser.add_argument(
@@ -168,7 +168,7 @@ def _time_to_date(timestamp: float) -> str:
     x = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=timestamp)
     return x.strftime("%d/%m/%Y at %H:%M:%S")
 
-def _list() -> None:
+def _list(file: str) -> None:
     
     with open(f"{YEETED_JSON}", "r") as f:
         yeet_json = json.load(f)
@@ -177,11 +177,15 @@ def _list() -> None:
         print("No yeeted files (yet). Try yeeting some files!")
         return
     
-    print("Yeeted files:")
-    for file in yeet_json:
-        print(f"""{file}:
-  Expiry: {_time_to_date(yeet_json[file]['expires'])}
-  Original Path: {yeet_json[file]['path']}
+    print("Yeeted file(s):")
+    for fileName in yeet_json:
+        # if a file is specified, only print that file
+        # otherwise, print all files
+        if file and file != fileName:
+            continue
+        print(f"""{fileName}:
+  Expiry: {_time_to_date(yeet_json[fileName]['expires'])}
+  Original Path: {yeet_json[fileName]['path']}
     """)
     
 def _confirm(prompt: str, callback: callable) -> None:
@@ -248,7 +252,7 @@ def main():
             _confirm(f"Are you sure you want to restore {args.file}?", lambda: _restore(args.file))
         
     if args.list:
-        _list()
+        _list(args.file)
         
     if args.empty:
         if args.yes:
