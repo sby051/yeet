@@ -5,13 +5,9 @@ if [ -d "/opt/yeet" ]; then
     exit 1
 fi
 
-# Create yeet directory
-sudo mkdir /opt/yeet
-sudo chown $USER:$USER /opt/yeet
-
-# Create bin directory
-mkdir /opt/yeet/bin
-curl -L "https://github.com/sby051/yeet/blob/main/bin/yeet?raw=true" > /opt/yeet/bin/yeet
+sudo mkdir /usr/bin/yeet
+sudo touch /usr/bin/yeet/yeet
+curl -L "https://github.com/sby051/yeet/blob/main/bin/yeet?raw=true" > /usr/bin/yeet/yeet
 
 # determine shell
 if [ -n "$ZSH_VERSION" ]; then
