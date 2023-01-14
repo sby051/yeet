@@ -145,8 +145,8 @@ def _restore(file: str) -> None:
     print(f"Restored {file} to {original_location}")
     
 def _update_yeet() -> None:
-    # pull latest binary from github and replace the current one
-    system("curl -s https://raw.githubusercontent.com/sby051/yeet/main/bin/yeet > /opt/yeet/bin/yeet")
+    print("Updating yeet...")
+    system("curl -s https://raw.githubusercontent.com/sby051/yeet/main/bin/yeet > /usr/bin/yeet")
     print("Yeet has been updated.")
     
 def _time_to_date(timestamp: float) -> str:
