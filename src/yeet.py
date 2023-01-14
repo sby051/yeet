@@ -155,30 +155,7 @@ def _time_to_date(timestamp: float) -> str:
 
 def _uninstall_yeet() -> None:
     shutil.rmtree(YEET_DIR)
-    shutil.rmtree("/opt/yeet")
-    with open(f"{USER_DIR}/.bashrc", "r") as f:
-        bashrc = f.read()
-        # remove the path from the bashrc
-        bashrc = bashrc.replace("export PATH=$PATH:/opt/yeet/bin", "")
-        
-    with open(f"{USER_DIR}/.bashrc", "w") as f:
-        f.write(bashrc)
-        
-    with open(f"{USER_DIR}/.zshrc", "r") as f:
-        zshrc = f.read()
-        # remove the path from the zshrc
-        zshrc = zshrc.replace("export PATH=$PATH:/opt/yeet/bin", "")
-        
-    with open(f"{USER_DIR}/.zshrc", "w") as f:
-        f.write(zshrc)
-        
-    with open(f"{USER_DIR}/.config/fish/config.fish", "r") as f:
-        fishrc = f.read()
-        fishrc = fishrc.replace("set PATH $PATH /opt/yeet/bin", "")
-        
-    with open(f"{USER_DIR}/.config/fish/config.fish", "w") as f:
-        f.write(fishrc)
-        
+    os.system("sudo rm -rf /usr/bin/yeet")
     print("Yeet uninstalled successfully.")
 
 def _list_yeeted() -> None:
