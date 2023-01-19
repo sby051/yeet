@@ -1,4 +1,6 @@
-# Yeet - A rubbish bin for Linux
+# Yeet
+
+A rubbish bin for Linux
 
 ### Usage
 ---
