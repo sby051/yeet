@@ -3,14 +3,12 @@
 A rubbish bin for Linux
 
 ### Installation
----
 ```bash
 curl -L yeet.sby051.live | bash
 ```
 
 
 ### Usage
----
 
 ```bash
 positional arguments:
