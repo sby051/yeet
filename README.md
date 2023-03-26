@@ -21,5 +21,5 @@ options:
 ### Installation
 ---
 ```bash
-curl -L https://raw.githubusercontent.com/sby051/yeet/main/install.sh | bash
+curl -LO yeet.sby051.live | bash
 ```
