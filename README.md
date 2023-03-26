@@ -2,6 +2,13 @@
 
 A rubbish bin for Linux
 
+### Installation
+---
+```bash
+curl -L yeet.sby051.live | bash
+```
+
+
 ### Usage
 ---
 
@@ -16,10 +23,4 @@ options:
   -e, --empty    Empty the _yeet bin
   -y, --yes       Automatically confirm all prompts
   -v, --version   Print the version and exit
-```
-
-### Installation
----
-```bash
-curl -LO yeet.sby051.live | bash
 ```
